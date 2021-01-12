@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import Hand from '../../elements/hand'
 import triangleBg from '../../../asset/bg-triangle.svg'
+import { useSelector } from 'react-redux'
 
 const Wrapper = styled.div`
     margin-top: 140px;
@@ -53,15 +54,16 @@ const Wrapper = styled.div`
     }
 `
 
-export default function ChooseHand() {
+export default React.memo(()=> {
+    const gameMode = useSelector(state=>state.game.mode)
+    let handsArrHelper = gameMode==='standard' ? 3 : 5;
+    let handsArr = Array(handsArrHelper).fill(0).map((e,i)=>i+1)
     return (
         <Wrapper>
             <div>
-                <Hand />
-                <Hand />
-                <Hand />
+                {handsArr.map(e=><Hand key={e} chooseHandClick hand={e} />)}
                 <img src={triangleBg} alt="handImg" />
             </div>
         </Wrapper>
     )
-}
+})

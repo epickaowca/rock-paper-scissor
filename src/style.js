@@ -37,4 +37,5 @@ export const media = {
     desktop1: '@media(min-width: 768px)',
     desktop2: '@media(min-width: 1440px)',
     special1: '@media(min-width: 570px)',
+    special2: '@media(min-width: 1024px)',
 }

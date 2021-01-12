@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import imgExample from '../../asset/icon-lizard.svg'
+import { useDispatch } from 'react-redux'
+import { chooseHand } from '../../redux/ducks/game'
 
 const Wrapper = styled.div`
 z-index: 2;
@@ -31,8 +32,8 @@ cursor: pointer;
     &:before{
         width: 130%;
         height: 130%;
-        background-image: linear-gradient(${p=>p.theme.handsColor.hand1.col1}, ${p=>p.theme.handsColor.hand1.col2});
-        box-shadow: 0px 6px 0px 0px ${p=>p.theme.handsColor.hand1.specialCol};
+        background-image: linear-gradient(${p=>p.theme.handsColor[`hand${p.hand}`].col1}, ${p=>p.theme.handsColor[`hand${p.hand}`].col2});
+        box-shadow: 0px 6px 0px 0px ${p=>p.theme.handsColor[`hand${p.hand}`].specialCol};
     }
     &:after{
         box-shadow: inset 0px 6px 2px 0px rgba(0,0,0,.5);
@@ -64,11 +65,18 @@ ${p=>p.theme.media.desktop1}{
 }
 `
 
-export default function Hand() {
+export default function Hand({hand, chooseHandClick}) {
+    const dispatch = useDispatch()
+    let image = require(`../../asset/hand${hand}.svg`)
+    const handClickHandler = ()=>{
+        if(chooseHandClick){
+            dispatch(chooseHand(hand))
+        }
+    }
     return (
-        <Wrapper>
-            <div>
-                <img src={imgExample} alt="handImg" />
+        <Wrapper hand={hand}>
+            <div onClick={handClickHandler}>
+                <img src={image.default} alt="handImg" />
             </div>
         </Wrapper>
     )

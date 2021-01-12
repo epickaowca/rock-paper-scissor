@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-
+import { useSelector } from 'react-redux'
 const Wrapper = styled.div`
     background: white;
     padding: 10px 35px;
@@ -32,10 +32,11 @@ const Wrapper = styled.div`
 `
 
 export default function Score() {
+    const score = useSelector(state => state.game.scoreStandard)
     return (
         <Wrapper>
             <p>score</p>
-            <p>12</p>
+            <p>{score}</p>
         </Wrapper>
     )
 }
