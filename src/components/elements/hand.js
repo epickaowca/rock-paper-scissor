@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { useDispatch } from 'react-redux'
 import { chooseHand } from '../../redux/ducks/game'
-
+import { useSelector } from 'react-redux'
 const Wrapper = styled.div`
 z-index: 2;
 width: 85px;
@@ -54,18 +54,19 @@ ${p=>p.theme.media.desktop1}{
         }
     }
 }
-${p=>p.theme.media.desktop1}{
-    width: 170px;
-    height: 170px;
+${p=>p.theme.media.desktop2}{
+    width: 150px;
+    height: 150px;
     & > div{
         & > img{
-            transform: scale(1.6);
+            transform: scale(1.4);
         }
     }
 }
 `
 
 export default function Hand({hand, chooseHandClick}) {
+    const gamemode = useSelector(state=>state.game.mode)
     const dispatch = useDispatch()
     let image = require(`../../asset/hand${hand}.svg`)
     const handClickHandler = ()=>{
@@ -74,7 +75,7 @@ export default function Hand({hand, chooseHandClick}) {
         }
     }
     return (
-        <Wrapper hand={hand}>
+        <Wrapper gamemode={gamemode} hand={hand}>
             <div onClick={handClickHandler}>
                 <img src={image.default} alt="handImg" />
             </div>

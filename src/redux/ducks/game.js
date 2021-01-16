@@ -1,11 +1,17 @@
 const GAME_START = 'game/game_start'
-const RULES_VISIBLE = 'game/rules_visible'
 const CHOOSE_HAND = 'game/choose_hand'
-const DUEL = 'game/duel'
 const SCORE_STANDARD = 'game/score_standard'
+const MUTATE_STATE = 'game/mutate_state'
+
+let scoreStandardLocalStorage;
+try {
+    scoreStandardLocalStorage = localStorage.getItem('scoreStandard');
+} catch(e) {
+    scoreStandardLocalStorage = 'error'
+}
 
 const initState = {
-    mode: 'standard',
+    mode: '',
     rules: false,
     duel: '',
     chosenHand: '',
@@ -13,35 +19,46 @@ const initState = {
     scoreExtended: 0,
 }
 
+if(scoreStandardLocalStorage !== ' error' && scoreStandardLocalStorage !== null){
+    initState.scoreStandard = scoreStandardLocalStorage
+}
+
+
 const reducer = (state = initState, {type, payload})=>{
     switch(type){
-        case SCORE_STANDARD:return{
-            ...state, scoreStandard: payload === 'plus' ? ++state.scoreStandard : payload === 'minus' ? --state.scoreStandard : state.scoreStandard
+        case SCORE_STANDARD:
+        let scoreStandardHelper = payload === 'plus' ? ++state.scoreStandard : payload === 'minus' ? --state.scoreStandard : state.scoreStandard
+        localStorage.setItem('scoreStandard', scoreStandardHelper);
+        return{
+            ...state, scoreStandard: scoreStandardHelper
         }
-        case DUEL:return{
-            ...state, duel: payload
+        
+        case MUTATE_STATE:return{
+            ...state, [payload.name]: payload.value
         }
-        case CHOOSE_HAND:return{
-            ...state, chosenHand: payload, duel: true
-        }
-        case RULES_VISIBLE:return{
-            ...state, rules: payload
-        }
+
         case GAME_START: return{
             ...state, mode: payload
+        }
+
+        case CHOOSE_HAND:return{
+            ...state, chosenHand: payload, duel: true
         }
         default: return state
     }
 }
 
-export const scoreStandard = (payload)=>({type: SCORE_STANDARD, payload})
 
-export const duel = (payload)=>({type: DUEL, payload})
 
-export const chooseHand = (payload)=>({type: CHOOSE_HAND, payload})
 
-export const gameStart = (payload)=>({type:GAME_START, payload})
 
-export const rulesVisible = (payload)=>({type:RULES_VISIBLE, payload})    
+export const mutateState = payload=>({type:MUTATE_STATE, payload})
+
+export const scoreStandard = payload=>({type: SCORE_STANDARD, payload})
+
+export const chooseHand = payload=>({type: CHOOSE_HAND, payload})
+
+export const gameStart = payload=>({type:GAME_START, payload})
+  
 
 export default reducer

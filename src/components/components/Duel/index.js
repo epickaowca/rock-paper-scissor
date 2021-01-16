@@ -4,7 +4,7 @@ import Hand from '../../elements/hand'
 import { useSelector, useDispatch } from 'react-redux'
 import gsap from 'gsap'
 import Button  from '../../elements/button.js'
-import { chooseHand, duel, scoreStandard } from '../../../redux/ducks/game'
+import { scoreStandard, mutateState } from '../../../redux/ducks/game'
 const Wrapper = styled.div`
 padding: 10px;
 margin-top: 30px;
@@ -78,12 +78,10 @@ ${p=>p.theme.media.desktop1}{
         max-width: 450px;
         & > div{
             & > div{
-                &:nth-child(1){
-                }
                 &:nth-child(2){
-                    top: -20px;
-                    width: 221px;
-                    height: 221px;
+                    top: -15px;
+                    width: 150px;
+                    height: 150px;
                 }
             }
             & > p{
@@ -92,9 +90,23 @@ ${p=>p.theme.media.desktop1}{
         }
     }
 }
+${p=>p.theme.media.desktop2}{
+    & > div{
+        & > div{
+            & > div{
+                &:nth-child(2){
+                    top: -15px;
+                    width: 160px;
+                    height: 160px;
+                }
+            }
+        }
+    }
+}
 `
 
 let randomHand
+let winner
 export default React.memo(()=> {
     const dispatch = useDispatch()
     const comunicat =  useRef(null)
@@ -104,37 +116,43 @@ export default React.memo(()=> {
     const choosenHand = useSelector(state=>state.game.chosenHand)
     const gameMode = useSelector(state=>state.game.mode)
     const duelState = useSelector(state=>state.game.duel)
-    let handHelper
+    let lastHandHelper
     if(gameMode==='standard'){
-        handHelper = 3
+        lastHandHelper = 3
     }else{
-        handHelper = 5
+        lastHandHelper = 5
     }
     
-    let winner
+    
     
     useEffect(()=>{
+        //rules
         if(choosenHand && duelState){
-            let choosenHandHelper = choosenHand===3 ? 0 : choosenHand
-            winner = choosenHand===randomHand ? 'draw' : choosenHandHelper+1===randomHand ? 'you win' : 'you lose'
+            let choosenHandHelper = choosenHand===lastHandHelper ? 0 : choosenHand
+            let choosenHandHelperExpanded = choosenHand >= 3 ? choosenHand-5 : choosenHand
+            winner = choosenHand===randomHand ? 'draw' : choosenHandHelper+1===randomHand ? 'you win' : gameMode==='standard' ?  'you lose' : choosenHandHelperExpanded+3===randomHand ? 'you win' : 'you lose'
+
             comunicat.current.children[0].innerHTML = winner
         }
-    }, [choosenHand])
-    
+    }, [choosenHand, duelState])
     
     useEffect(()=>{
-        randomHand = Math.floor(Math.random() * handHelper) + 1;
+        randomHand = Math.floor(Math.random() * lastHandHelper) + 1;
+    }, [lastHandHelper])
+
+    useEffect(()=>{
+        let playerPickHelper = playerPick.current.children[0].children[0]
+        let housePickHelper = housePick.current.children[0].children[0]
         if(duelState===true){
+            randomHand = Math.floor(Math.random() * lastHandHelper) + 1;
             if(choosenHand !== ""){
                 let winners = []
                 if(winner==='draw'){
-                    winners.push(playerPick.current.children[0].children[0], housePick.current.children[0].children[0])
-                }else if(winner === 'you win'){
-                    winners.push(playerPick.current.children[0].children[0])
-                }else if(winner === 'you lose'){
-                    winners.push(housePick.current.children[0].children[0])
+                    winners.push(playerPickHelper, housePickHelper)
+                }else{
+                    winners.push(winner === 'you win' ? playerPickHelper : housePickHelper)
                 }
-    
+                
                 let randomDelay = Math.floor(Math.random() * 3) + 1
                 let tl = gsap.timeline()
                 tl.to(mainWrapper.current, {duration: .5, maxWidth: '800px', delay: randomDelay})
@@ -146,17 +164,18 @@ export default React.memo(()=> {
                 }})
             }
         }else if(duelState===false){
+            housePick.current.children[0].style.opacity = 0;
             setTimeout(()=>{
+                housePick.current.children[0].attributeStyleMap.clear()
+                housePickHelper.attributeStyleMap.clear()
                 comunicat.current.attributeStyleMap.clear()
                 mainWrapper.current.attributeStyleMap.clear()
-                playerPick.current.children[0].children[0].attributeStyleMap.clear()
-                housePick.current.children[0].children[0].attributeStyleMap.clear()
-                housePick.current.children[0].attributeStyleMap.clear()
+                playerPickHelper.attributeStyleMap.clear()
             }, 500)
         }
-    }, [choosenHand, duelState])
+    }, [choosenHand, duelState, lastHandHelper, dispatch])
     
-   
+    
 
     return (
         <Wrapper>
@@ -173,7 +192,7 @@ export default React.memo(()=> {
                 </div>
                 <div ref={comunicat}>
                     <h2>you lose</h2>
-                    <Button case2 clickFunc={()=>dispatch(duel(false))}>play again</Button>
+                    <Button case2 clickFunc={()=>dispatch(mutateState({name: 'duel', value: false}))}>play again</Button>
                 </div>
             </div>
         </Wrapper>

@@ -1,9 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
-import basicRule from '../../../asset/image-rules.svg'
 import closeIco from '../../../asset/icon-close.svg'
-import { useDispatch } from 'react-redux'
-import { rulesVisible } from '../../../redux/ducks/game'
+import { useDispatch, useSelector } from 'react-redux'
+import { mutateState } from '../../../redux/ducks/game'
 
 const Wrapper = styled.div`
 position: absolute;
@@ -73,15 +72,17 @@ align-items: center;
 `
 export default function Rules() {
     const dispatch = useDispatch()
+    const gameMode = useSelector(state=>state.game.mode)
+    let imgRules = gameMode==='standard' ? require('../../../asset/image-rules.svg') : require('../../../asset/image-rules-bonus.svg')
     return (
-        <Wrapper onClick={()=>dispatch(rulesVisible(false))}>
+        <Wrapper onClick={()=>dispatch(mutateState({name: 'rules', value: false}))}>
             <div>
                 <div>
                     <p>rules</p>
                     <img src={closeIco} />
                 </div>
-                <img src={basicRule} alt="rules" />
-                <img src={closeIco} />
+                <img alt="rules" src={imgRules.default} alt="rules" />
+                <img alt="exitRules" src={closeIco} />
             </div>
         </Wrapper>
     )
