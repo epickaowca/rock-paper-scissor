@@ -81,7 +81,7 @@ const Wrapper = styled.div`
     }
 `
 
-export default React.memo(()=> {
+const ChooseHand = ()=> {
     const gameMode = useSelector(state=>state.game.mode)
     let handsArrHelper = gameMode==='standard' ? 3 : 5;
     let handsArr = Array(handsArrHelper).fill(0).map((e,i)=>i+1)
@@ -94,4 +94,6 @@ export default React.memo(()=> {
             </div>
         </Wrapper>
     )
-})
+}
+
+export default React.memo(ChooseHand)

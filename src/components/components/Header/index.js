@@ -26,7 +26,7 @@ const HeaderElem = styled.header`
     }
 `
 
-export default React.memo(()=> {
+const Header = ()=> {
     return (
         <HeaderElem>
             <div>
@@ -37,4 +37,6 @@ export default React.memo(()=> {
             <Score />
         </HeaderElem>
     )
-})
+}
+
+export default React.memo(Header)

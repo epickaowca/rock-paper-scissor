@@ -4,9 +4,12 @@ const SCORE_STANDARD = 'game/score_standard'
 const MUTATE_STATE = 'game/mutate_state'
 
 let scoreStandardLocalStorage;
+let scoreExtendedLocalStorage;
 try {
     scoreStandardLocalStorage = localStorage.getItem('scoreStandard');
+    scoreExtendedLocalStorage = localStorage.getItem('scoreExtended');
 } catch(e) {
+    scoreExtendedLocalStorage = 'error';
     scoreStandardLocalStorage = 'error'
 }
 
@@ -22,15 +25,20 @@ const initState = {
 if(scoreStandardLocalStorage !== ' error' && scoreStandardLocalStorage !== null){
     initState.scoreStandard = scoreStandardLocalStorage
 }
+if(scoreExtendedLocalStorage !== ' error' && scoreExtendedLocalStorage !== null){
+    initState.scoreExtended = scoreExtendedLocalStorage
+}
 
 
 const reducer = (state = initState, {type, payload})=>{
     switch(type){
         case SCORE_STANDARD:
-        let scoreStandardHelper = payload === 'plus' ? ++state.scoreStandard : payload === 'minus' ? --state.scoreStandard : state.scoreStandard
-        localStorage.setItem('scoreStandard', scoreStandardHelper);
+
+        let scoreStandardHelper = payload.operator === 'plus' ? ++state[payload.name] : payload.operator === 'minus' ? --state[payload.name] : state[payload.name]
+        localStorage.setItem(payload.name, scoreStandardHelper);
+        
         return{
-            ...state, scoreStandard: scoreStandardHelper
+            ...state, [payload.name]: scoreStandardHelper
         }
         
         case MUTATE_STATE:return{

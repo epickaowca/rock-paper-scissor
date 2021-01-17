@@ -107,7 +107,7 @@ ${p=>p.theme.media.desktop2}{
 
 let randomHand
 let winner
-export default React.memo(()=> {
+const Duel = ()=> {
     const dispatch = useDispatch()
     const comunicat =  useRef(null)
     const mainWrapper =  useRef(null)
@@ -160,7 +160,8 @@ export default React.memo(()=> {
                 .to(winners, {boxShadow: '0px 0px 0px 70px rgba(255,255,255,.1), 0px 0px 0px 130px rgba(255,255,255,.05), 0px 0px 0px 170px rgba(255,255,255,.01)'})
                 .to(comunicat.current, {duration: .3, autoAlpha: 1, onComplete:()=>{
                     let operationHelepr = winner==='you win' ? 'plus' : winner==='you lose' ? 'minus' : 'draw'
-                    dispatch(scoreStandard(operationHelepr))
+                    let nameHelper = gameMode === 'standard'  ? 'scoreStandard' : 'scoreExtended'
+                    dispatch(scoreStandard({name: nameHelper, operator: operationHelepr}))
                 }})
             }
         }else if(duelState===false){
@@ -197,4 +198,6 @@ export default React.memo(()=> {
             </div>
         </Wrapper>
     )
-})
+}
+
+export default React.memo(Duel)

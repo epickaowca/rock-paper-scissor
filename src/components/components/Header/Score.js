@@ -32,7 +32,9 @@ const Wrapper = styled.div`
 `
 
 export default function Score() {
-    const score = useSelector(state => state.game.scoreStandard)
+    const gameMode = useSelector(state => state.game.mode)
+    let scoreHelper = gameMode === 'standard' ? 'scoreStandard' : 'scoreExtended' 
+    const score = useSelector(state => state.game[scoreHelper])
     return (
         <Wrapper>
             <p>score</p>
